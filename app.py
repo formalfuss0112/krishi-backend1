@@ -1,6 +1,9 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from database import init_db, save_prediction, get_all_predictions
+import os
+import openai
+openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 app = Flask(__name__)
 CORS(app)  # ✅ Allow CORS so frontend can access
