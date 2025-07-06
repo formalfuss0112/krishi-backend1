@@ -1,18 +1,38 @@
+import os
+import openai
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from database import init_db, save_prediction, get_all_predictions
-import os
-import openai
-openai.api_key = os.environ.get("OPENAI_API_KEY")
+
 
 app = Flask(__name__)
 CORS(app)  # ✅ Allow CORS so frontend can access
+ 
+openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 init_db()  # ✅ Initialize SQLite database
 
 @app.route("/")
 def home():
     return {"message": "Krishi Sakhi Backend is Running!"}
+
+@app.route("/ask", methods=["POST"])
+def ask():
+    try:
+        data = request.get_json()
+        user_message = data.get("message", "")
+
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": user_message}],
+            temperature=0.7
+        )
+
+        reply = response.choices[0].message.content
+        return jsonify({"reply": reply})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/predict", methods=["POST"])
 def predict():
