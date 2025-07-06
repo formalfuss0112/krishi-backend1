@@ -1,8 +1,12 @@
 from flask import Flask, request, jsonify
 from database import init_db, save_prediction, get_all_predictions
+from flask import Flask, request, jsonify
+from flask_cors import CORS  
 
 app = Flask(__name__)
 init_db()  # initialize DB once when app starts
+app = Flask(__name__)
+CORS(app)  
 
 @app.route("/")
 def home():
